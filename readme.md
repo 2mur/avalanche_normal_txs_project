@@ -1,5 +1,3 @@
----
-
 # Token Clinic: Lakehouse Data Pipelines
 
 A professional-grade, environment-driven Data Lakehouse pipeline designed to index, decode, and analyze EVM-compatible blockchain token transactions.
@@ -14,8 +12,6 @@ Built with **Python**, **Polars**, and **Google Cloud Storage (GCS)**, this arch
 * **Monthly Hive Partitioning:** Transforms raw JSON/Parquet dumps into a clean, query-optimized Silver Layer partitioned by month (`token=SYMBOL/month=YYYY-MM/data.parquet`).
 * **Schema Drift Immunity:** Utilizes `gcsfs` and Polars' diagonal concatenation to merge raw files seamlessly, even if upstream API columns change order or disappear.
 * **Automated EDA Reporting:** Generates interactive, standalone HTML reports using Plotly to track monthly transaction volume, user growth, and function call distributions.
-
----
 
 ## Project Structure
 

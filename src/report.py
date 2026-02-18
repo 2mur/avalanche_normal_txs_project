@@ -330,7 +330,7 @@ def generate_eda_report(token_symbol: str):
 
             <h2 class="title" style="font-size: 1.5rem; margin-top: 3rem;">Monthly Time Series Analysis</h2>
             <div class="chart-wrapper">
-                {pio.to_html(fig_monthly, full_html=False, include_plotlyjs=False)}
+                {pio.to_html(fig_monthly, full_html=False, include_plotlyjs='cdn')}
             </div>
             
             <div class="chart-wrapper">
@@ -342,6 +342,7 @@ def generate_eda_report(token_symbol: str):
             </div>
 
             <h2 class="title" style="font-size: 1.5rem; margin-top: 3rem;">Activity Distribution</h2>
+            
             <div class="chart-wrapper">
                 {html_heat}
             </div>
@@ -349,7 +350,7 @@ def generate_eda_report(token_symbol: str):
             <h2 class="title" style="font-size: 1.5rem; margin-top: 3rem;">Growth & Cumulative Metrics</h2>
             
             <div class="chart-wrapper">
-                {pio.to_html(fig_cum_activity, full_html=False, include_plotlyjs='cdn')}
+                {pio.to_html(fig_cum_activity, full_html=False, include_plotlyjs=False)}
             </div>
 
             <div class="chart-wrapper">

@@ -1,0 +1,40 @@
+main:
+    steps:
+    - init:
+        assign:
+            - project_id: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+            - location: "us-central1"
+            # Define Full Job Paths
+            - ingest_job: ${"projects/" + project_id + "/locations/" + location + "/jobs/lakehouse-ingestor"}
+            - process_job: ${"projects/" + project_id + "/locations/" + location + "/jobs/lakehouse-processor"}
+            - report_job: ${"projects/" + project_id + "/locations/" + location + "/jobs/lakehouse-reporter"}
+
+    # Step 1: Ingestion (API -> Raw Parquet)
+    - run_ingestion:
+        call: googleapis.run.v2.projects.locations.jobs.run
+        args:
+            name: ${ingest_job}
+        result: ingest_result
+
+    # Step 2: Processing (Raw -> Silver/Clean Parquet)
+    # Uses decodingfunctions.json to parse inputs
+    - run_processing:
+        call: googleapis.run.v2.projects.locations.jobs.run
+        args:
+            name: ${process_job}
+        result: process_result
+
+    # Step 3: Reporting (Silver -> HTML)
+    # Generates EDA reports with Plotly
+    - run_reporting:
+        call: googleapis.run.v2.projects.locations.jobs.run
+        args:
+            name: ${report_job}
+        result: report_result
+
+    - return_result:
+        return: 
+            status: "Success"
+            ingest_execution: ${ingest_result.name}
+            process_execution: ${process_result.name}
+            report_execution: ${report_result.name}

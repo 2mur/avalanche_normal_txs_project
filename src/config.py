@@ -26,7 +26,7 @@ MAX_RESULT_SIZE = 10000  # Etherscan limit
 
 # --- FOLDER PATHS ---
 RAW_FOLDER = "raw_normal_data"
-PROCESSED_FOLDER = "processed_normal_data"
+PROCESSED_FOLDER = "processed_normal_transfers"
 REPORTS_FOLDER = "reports"
 
 # Columns to keep for clean data
@@ -40,17 +40,18 @@ DROPCOLS_INGEST = ["nonce", "transactionIndex", "gas", "gasPrice", "gasUsed",
 
 # --- TOKEN DEFINITIONS ---
 class TokenDef:
-    def __init__(self, symbol, address, decimals=18):
+    def __init__(self, symbol, address, supply,decimals=18):
         self.symbol = symbol
         self.address = address.lower()
         self.decimals = decimals
+        self.supply = supply
 
 TOKENS = [
-    TokenDef(symbol="ARENA", address="0xB8d7710f7d8349A506b75dD184F05777c82dAd0C", decimals=18), # Example
-    TokenDef(symbol="JOE", address="0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd", decimals=18),
-    TokenDef(symbol="NOCHILL", address="0xAcFb898Cff266E53278cC0124fC2C7C94C8cB9a5", decimals=18),
-    TokenDef(symbol="COQ", address="0x420FcA0121DC28039145009570975747295f2329", decimals=18),
-    TokenDef(symbol="KET", address="0xFFFF003a6BAD9b743d658048742935fFFE2b6ED7", decimals=18),
+    TokenDef(symbol="ARENA", address="0xB8d7710f7d8349A506b75dD184F05777c82dAd0C", supply= 10_000_000_000,decimals=18), # Example
+    TokenDef(symbol="JOE", address="0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd", supply = 500_000_000, decimals=18),
+    TokenDef(symbol="NOCHILL", address="0xAcFb898Cff266E53278cC0124fC2C7C94C8cB9a5",supply = 1_550_000_000, decimals=18),
+    TokenDef(symbol="COQ", address="0x420FcA0121DC28039145009570975747295f2329", supply= 69_420_000_000_000, decimals=18),
+    TokenDef(symbol="KET", address="0xFFFF003a6BAD9b743d658048742935fFFE2b6ED7", supply=1_000_000_000, decimals=18),
 ]
 
 '''
@@ -105,4 +106,23 @@ OrderedDict([
 ('methodId', String), 
 ('functionName', String), 
 ('month', String)])
+
+
+analytics
+
+from/to/caller -> user
+timestamp -> day
+    
+    by user
+        - number of users sent to
+        - number of users received from
+        - total value sent
+        - total value received
+        - net flow (remaining balance approximation)
+        - number of txs
+
+    by user and day
+        - balances per day
+        - 
+
 '''

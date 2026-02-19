@@ -2,6 +2,7 @@
 deploy.ps1
 deploy.sh
 unified.csv
+deploy-workflows-instructions.txt
 
 # Python caches
 __pycache__/

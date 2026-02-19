@@ -8,6 +8,7 @@ main:
             - ingest_job: ${"projects/" + project_id + "/locations/" + location + "/jobs/lakehouse-ingestor"}
             - process_job: ${"projects/" + project_id + "/locations/" + location + "/jobs/lakehouse-processor"}
             - report_job: ${"projects/" + project_id + "/locations/" + location + "/jobs/lakehouse-reporter"}
+            - users_job: ${"projects/" + project_id + "/locations/" + location + "/jobs/lakehouse-users-reporter"}
 
     # Step 1: Ingestion (API -> Raw Parquet)
     - run_ingestion:
@@ -32,9 +33,18 @@ main:
             name: ${report_job}
         result: report_result
 
+    # Step 4: Users Profiling (Silver Transfers -> Ledger/HTML)
+    # Generates user aggregates, behavioral classifications, and the User EDA dashboard
+    - run_users_profiling:
+        call: googleapis.run.v2.projects.locations.jobs.run
+        args:
+            name: ${users_job}
+        result: users_result
+
     - return_result:
         return: 
             status: "Success"
             ingest_execution: ${ingest_result.name}
             process_execution: ${process_result.name}
             report_execution: ${report_result.name}
+            users_execution: ${users_result.name}

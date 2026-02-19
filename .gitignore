@@ -1,9 +1,7 @@
 # Secrets
 deploy.ps1
 deploy.sh
-Dockerfile
 unified.csv
-
 
 # Python caches
 __pycache__/

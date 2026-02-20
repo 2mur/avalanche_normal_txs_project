@@ -1,8 +1,8 @@
 # Token Clinic: Lakehouse Data Pipelines
 
-A professional-grade, environment-driven Data Lakehouse pipeline designed to index, decode, and analyze EVM-compatible blockchain token transactions.
+A professional-grade, environment-driven Data Lakehouse pipeline designed to index, decode, analyze, and visualize EVM-compatible blockchain token transactions.
 
-Built with **Python**, **Polars**, and **Google Cloud Storage (GCS)**, this architecture is designed to handle API pagination limits, mitigate schema drift, and organize data into highly performant Monthly Hive Partitions.
+Built with **Python**, **Polars**, **React**, and **Google Cloud Storage (GCS)**, this architecture is designed to handle API pagination limits, mitigate schema drift, organize data into highly performant Monthly Hive Partitions, and serve interactive visual analytics.
 
 ## Key Features
 
@@ -10,20 +10,25 @@ Built with **Python**, **Polars**, and **Google Cloud Storage (GCS)**, this arch
 * **Pagination Overlap & Deduplication:** Intelligently handles Etherscan's hard 10,000-record API limits by overlapping boundary blocks and applying global deduplication, ensuring zero data loss at the seams.
 * **Dynamic Hex-Decoding:** Parses raw Ethereum transaction calldata (`input`) against dynamic, 32-byte-slot JSON rules to extract clean methods, senders, receivers, and token amounts without needing full ABIs.
 * **Monthly Hive Partitioning:** Transforms raw JSON/Parquet dumps into a clean, query-optimized Silver Layer partitioned by month (`token=SYMBOL/month=YYYY-MM/data.parquet`).
-* **Schema Drift Immunity:** Utilizes `gcsfs` and Polars' diagonal concatenation to merge raw files seamlessly, even if upstream API columns change order or disappear.
-* **Automated EDA Reporting:** Generates interactive, standalone HTML reports using Plotly to track monthly transaction volume, user growth, and function call distributions.
+* **Advanced Behavioral Profiling:** Classifies wallet addresses into Wealth Classes (Whales, Retail, Dust) and Action Classes (Accumulating, Distributing) based on running ledger balances.
+* **Frosted-Glass EDA Dashboards:** Generates interactive, standalone HTML reports using Plotly and glassmorphism CSS to track network behavior, user growth, and top holder metrics.
+* **WebGL Time-Series Visualization:** A dedicated React frontend utilizing `react-force-graph-2d` to render dynamic, high-performance network graphs with glowing transfer particles and state-changing nodes.
 
 ## Project Structure
 
 ```text
 ├── src/
-│   ├── config.py       # Centralized environment & token configuration
-│   ├── ingest.py       # Pipeline 1: Raw Data Ingestion (Dual-Cursor)
-│   ├── process.py      # Pipeline 2: Silver Layer Transformation & Decoding
-│   ├── report.py       # Pipeline 3: Gold Layer Analytics & HTML Generation
-│   └── utils.py        # Core API, GCS, and data cleaning helpers
-├── .gitignore          # Secures secrets and local data folders
-├── deploy.ps1          # Cloud Run deployment script
+│   ├── config.py        # Centralized environment & token configuration
+│   ├── ingest.py        # Pipeline 1: Raw Data Ingestion (Dual-Cursor)
+│   ├── process.py       # Pipeline 2: Silver Layer Transformation & Decoding
+│   ├── report.py        # Pipeline 3: Gold Layer Analytics & EDA
+│   ├── users.py         # Pipeline 4: Behavioral Profiling & User Dashboards
+│   └── utils.py         # Core API, GCS, and data cleaning helpers
+├── blockchain-viz/      # React Vite App for WebGL Network Simulation
+│   ├── src/App.jsx      # Force-graph rendering and time-series logic
+│   └── package.json     
+├── .gitignore           # Secures secrets and local data folders
+├── deploy.ps1           # Cloud deployment script
 └── README.md
 
 ```
@@ -32,7 +37,7 @@ Built with **Python**, **Polars**, and **Google Cloud Storage (GCS)**, this arch
 
 ## Pipeline Operations
 
-The system is broken down into three decoupled pipelines that can be scheduled independently via Google Cloud Run Jobs or cron.
+The system is broken down into modular pipelines that can be scheduled independently. In a professional setup, you want to trigger a pipeline via Google Cloud Run Jobs or cron.
 
 ### 1. The Ingestor (`src/ingest.py`)
 
@@ -50,12 +55,32 @@ Transforms the Bronze layer (Raw) into the Silver layer (Processed).
 * Deduplicates overlapping boundary blocks.
 * Executes the `decode_row` logic to parse hex data.
 * Writes out partitioned Hive structures.
-* *Bonus:* Generates a CSV sample of decoded methods to `samples/` for easy manual auditing.
 
 ### 3. The Reporter (`src/report.py`)
 
-Generates the Gold layer.
+Generates the initial Gold layer.
 
 * Uses Polars' Hive-aware lazy scanning to rapidly query the Silver layer.
 * Computes aggregate statistics (Unique users, volume, function distributions).
-* Uploads a standalone `_eda.html` dashboard directly to the GCS `reports/` folder.
+* Uploads a standalone `_eda.html` dashboard directly to the Google Cloud Storage `reports/` folder.
+
+### 4. The Profiler (`src/users.py`)
+
+Handles entity resolution and wallet-level behavioral classification.
+
+* **Lifetime Aggregations:** Calculates total inbound/outbound tx counts, volumes, and net flows for every historical address.
+* **Daily Ledger:** Transforms transaction deltas into a cumulative running balance per user, per day.
+* **Behavioral Matrix:** Classifies wallets strictly based on mathematical thresholds (e.g., >0.1% supply = Whale) and action shifts (Holding vs. Distributing).
+* **Quadrant Dashboard:** Generates a custom HTML UI with frosted-glass CSS, Plotly stacked area charts, and top 50 user statistic cards.
+
+### 5. WebGL Transfer Simulation (`blockchain-viz/`)
+
+A standalone React application hosted statically on Google Cloud Storage.
+
+* **Direct Data Fetching:** Pulls processed JSON payloads directly from the public Google Cloud Storage bucket using CORS-enabled fetch requests.
+* **Physics Engine:** Utilizes Three.js/WebGL to animate thousands of nodes.
+* **Dynamic State Management:** Nodes drop out of the central cluster (turn gray) when balances hit 0, and glowing directional particles scale dynamically with transfer amounts along the edges.
+
+---
+
+Would you like me to draft the `deploy.ps1` script to automate building the React app and uploading it to Google Cloud Storage alongside your Python pipeline deployments?

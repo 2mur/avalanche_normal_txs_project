@@ -1,8 +1,8 @@
 # Token Clinic: Lakehouse Data Pipelines
 
-A professional-grade, environment-driven Data Lakehouse pipeline designed to index, decode, analyze, and visualize EVM-compatible blockchain token transactions.
+A Data Lakehouse pipeline designed to index, decode, analyze, and visualize EVM-compatible blockchain token transactions.
 
-Built with **Python**, **Polars**, **React**, and **Google Cloud Storage (GCS)**, this architecture is designed to handle API pagination limits, mitigate schema drift, organize data into highly performant Monthly Hive Partitions, and serve interactive visual analytics.
+Built with **Python**, **Polars**, **Plotly**, and **Google: Worfkflows, Cloud Storage, Cloud Run**, this architecture is designed to handle API pagination limits, mitigate schema drift, organize data into highly performant Monthly Hive Partitions, and serve interactive visual analytics.
 
 ## Key Features
 
@@ -11,8 +11,6 @@ Built with **Python**, **Polars**, **React**, and **Google Cloud Storage (GCS)**
 * **Dynamic Hex-Decoding:** Parses raw Ethereum transaction calldata (`input`) against dynamic, 32-byte-slot JSON rules to extract clean methods, senders, receivers, and token amounts without needing full ABIs.
 * **Monthly Hive Partitioning:** Transforms raw JSON/Parquet dumps into a clean, query-optimized Silver Layer partitioned by month (`token=SYMBOL/month=YYYY-MM/data.parquet`).
 * **Advanced Behavioral Profiling:** Classifies wallet addresses into Wealth Classes (Whales, Retail, Dust) and Action Classes (Accumulating, Distributing) based on running ledger balances.
-* **Frosted-Glass EDA Dashboards:** Generates interactive, standalone HTML reports using Plotly and glassmorphism CSS to track network behavior, user growth, and top holder metrics.
-* **WebGL Time-Series Visualization:** A dedicated React frontend utilizing `react-force-graph-2d` to render dynamic, high-performance network graphs with glowing transfer particles and state-changing nodes.
 
 ## Project Structure
 
@@ -24,11 +22,10 @@ Built with **Python**, **Polars**, **React**, and **Google Cloud Storage (GCS)**
 │   ├── report.py        # Pipeline 3: Gold Layer Analytics & EDA
 │   ├── users.py         # Pipeline 4: Behavioral Profiling & User Dashboards
 │   └── utils.py         # Core API, GCS, and data cleaning helpers
-├── blockchain-viz/      # React Vite App for WebGL Network Simulation
-│   ├── src/App.jsx      # Force-graph rendering and time-series logic
-│   └── package.json     
 ├── .gitignore           # Secures secrets and local data folders
 ├── deploy.ps1           # Cloud deployment script
+├── Dockerfile           # Image
+├── workflow.yaml        # Cloud Workflows
 └── README.md
 
 ```
@@ -72,15 +69,3 @@ Handles entity resolution and wallet-level behavioral classification.
 * **Daily Ledger:** Transforms transaction deltas into a cumulative running balance per user, per day.
 * **Behavioral Matrix:** Classifies wallets strictly based on mathematical thresholds (e.g., >0.1% supply = Whale) and action shifts (Holding vs. Distributing).
 * **Quadrant Dashboard:** Generates a custom HTML UI with frosted-glass CSS, Plotly stacked area charts, and top 50 user statistic cards.
-
-### 5. WebGL Transfer Simulation (`blockchain-viz/`)
-
-A standalone React application hosted statically on Google Cloud Storage.
-
-* **Direct Data Fetching:** Pulls processed JSON payloads directly from the public Google Cloud Storage bucket using CORS-enabled fetch requests.
-* **Physics Engine:** Utilizes Three.js/WebGL to animate thousands of nodes.
-* **Dynamic State Management:** Nodes drop out of the central cluster (turn gray) when balances hit 0, and glowing directional particles scale dynamically with transfer amounts along the edges.
-
----
-
-Would you like me to draft the `deploy.ps1` script to automate building the React app and uploading it to Google Cloud Storage alongside your Python pipeline deployments?

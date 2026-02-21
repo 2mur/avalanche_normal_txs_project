@@ -1,5 +1,9 @@
 # Token Clinic: Lakehouse Data Pipelines
 
+```
+Download an HTML report from /reports and open in your preferred browser.
+```
+
 A Data Lakehouse pipeline designed to index, decode, analyze, and visualize EVM-compatible blockchain token transactions.
 
 Built with **Python**, **Polars**, **Plotly**, and **Google: Worfkflows, Cloud Storage, Cloud Run**, this architecture is designed to handle API pagination limits, mitigate schema drift, organize data into highly performant Monthly Hive Partitions, and serve interactive visual analytics.
@@ -22,6 +26,7 @@ Built with **Python**, **Polars**, **Plotly**, and **Google: Worfkflows, Cloud S
 │   ├── report.py        # Pipeline 3: Gold Layer Analytics & EDA
 │   ├── users.py         # Pipeline 4: Behavioral Profiling & User Dashboards
 │   └── utils.py         # Core API, GCS, and data cleaning helpers
+├── reports/             # HTML Pyplot reports
 ├── .gitignore           # Secures secrets and local data folders
 ├── deploy.ps1           # Cloud deployment script
 ├── Dockerfile           # Image

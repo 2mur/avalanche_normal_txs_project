@@ -183,7 +183,7 @@ def generate_users_dashboard(symbol: str, user_stats_df: pl.DataFrame, ledger_df
 
         # 2. Wealth Class Counts (Side-by-Side Bar)
         g2_df = ledger_df.group_by(["date_utc", "wealth_class"]).len().sort("date_utc")
-        fig2 = px.bar(g2_df, x="date_utc", y="len", color="wealth_class", barmode="group", title="Wealth Class Counts (Grouped)")
+        fig2 = px.bar(g2_df, x="date_utc", y="len", color="wealth_class", barmode="stack", title="Wealth Class Counts (Grouped)")
         fig2.update_layout(template=template_style, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         graphs_html.append(pio.to_html(fig2, full_html=False, include_plotlyjs=False))
 

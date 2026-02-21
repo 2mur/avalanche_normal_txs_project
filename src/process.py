@@ -165,6 +165,7 @@ def token_processor(token_def):
         "processed_normal_transfers": df.filter(is_transfer_condition).drop(['decoded_params','functionName','methodId','input']),
         "processed_normal_txs_notransfers": df.filter(~is_transfer_condition)
     }
+    
 
     # 5 --- EXPORT TO GOOGLE CLOUD STORAGE ---
     logger.info(f"{symbol} | Splitting dataset into Transfers vs Non-Transfers...")
@@ -190,6 +191,21 @@ def token_processor(token_def):
             blob = bucket.blob(blob_path)
             blob.upload_from_filename(local_path)
             os.remove(local_path)
+
+    # Export processed_normal_transfers as JSON
+    try:
+        if not datasets['processed_normal_transfers'].is_empty():
+            json_local_path = f"/tmp/{symbol}_transfers.json"
+            json_blob_path = f"processed_transfers_json/{symbol}_transfers.json"
+            
+            datasets['processed_normal_transfers'].write_json(json_local_path)
+            blob = bucket.blob(json_blob_path)
+            blob.upload_from_filename(json_local_path)
+            os.remove(json_local_path)
+            
+            logger.info(f"Transfers JSON saved -> gs://{BUCKET_NAME}/{json_blob_path}")
+    except Exception as e:
+        logger.warning(f"Could not save transfers JSON for {symbol}: {e}")
 
 def main():
     for token in TOKENS:
